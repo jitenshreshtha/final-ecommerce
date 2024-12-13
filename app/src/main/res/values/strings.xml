@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Final_project</string>
+    <string name="invalid_email">Invalid email format</string>
+    <string name="invalid_password">Password must be at least 6 characters</string>
+    <string name="password_mismatch">Passwords do not match</string>
+    <string name="error_first_name">First Name is required</string>
+    <string name="error_last_name">Last Name is required</string>
+    <string name="error_mailing_address">Mailing Address is required</string>
+    <string name="error_email">Email Address is required</string>
+    <string name="error_invalid_email">Invalid Email Format</string>
+    <string name="error_phone">Phone Number is required</string>
+    <string name="error_credit_card_fullname">Credit Card Full Name is required</string>
+    <string name="error_credit_card_number">Invalid Credit Card Number</string>
+    <string name="error_credit_card_expiry">Invalid Expiry Date (MM/YY)</string>
+    <string name="error_credit_card_cvv">Invalid CVV</string>
+    <string name="error_debit_card_fullname">Debit Card Full Name is required</string>
+    <string name="error_debit_card_number">Invalid Debit Card Number</string>
+    <string name="error_debit_card_expiry">Invalid Expiry Date (MM/YY)</string>
+    <string name="error_debit_card_cvv">Invalid CVV</string>
+    <string name="error_payment_portal">Please select a payment option</string>
+
+</resources>
