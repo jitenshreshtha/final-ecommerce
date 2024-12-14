@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -35,53 +34,31 @@ public class Checkout extends AppCompatActivity {
         //initialising awesome validation with basic style
         awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
 
-        // Getting references to the EditText fields
-        EditText firstName = findViewById(R.id.first_name);
-        EditText lastName = findViewById(R.id.last_name);
-        EditText mailingAddress = findViewById(R.id.mailing_address);
-        EditText emailAddress = findViewById(R.id.email_address);
-        EditText phoneNumber = findViewById(R.id.phone_number);
 
-
-        // Getting references to the credit card fields
-        EditText creditCardFullName = findViewById(R.id.credit_card_fullname);
-        EditText creditCardNumber = findViewById(R.id.credit_card_number);
-        EditText creditCardExpiry = findViewById(R.id.credit_card_expiry);
-        EditText creditCardCvv = findViewById(R.id.credit_card_cvv);
-
-
-        // Getting references to the debit card fields
-        EditText debitCardFullName = findViewById(R.id.debit_card_fullname);
-        EditText debitCardNumber = findViewById(R.id.debit_card_number);
-        EditText debitCardExpiry = findViewById(R.id.debit_card_expiry);
-        EditText debitCardCvv = findViewById(R.id.debit_card_cvv);
-
-        // Getting references to the payment portal fields
-        RadioGroup paymentPortalOptions = findViewById(R.id.payment_portal_options);
 
         // Setting validation rules for all fields
-        awesomeValidation.addValidation(this, R.id.first_name, RegexTemplate.NOT_EMPTY, R.string.error_first_name);
-        awesomeValidation.addValidation(this, R.id.last_name, RegexTemplate.NOT_EMPTY, R.string.error_last_name);
-        awesomeValidation.addValidation(this, R.id.mailing_address, RegexTemplate.NOT_EMPTY, R.string.error_mailing_address);
-        awesomeValidation.addValidation(this, R.id.email_address, RegexTemplate.NOT_EMPTY, R.string.error_email);
+        awesomeValidation.addValidation(this, R.id.first_name, "^(?!\\s*$)[A-Za-z]+([ '-][A-Za-z]+)*$", R.string.error_first_name_invalid);
+        awesomeValidation.addValidation(this, R.id.last_name, "^(?!\\s*$)[A-Za-z]+([ '-][A-Za-z]+)*$", R.string.error_last_name_invalid);
+        awesomeValidation.addValidation(this, R.id.mailing_address, "^[a-zA-Z0-9\\s,.'-]{3,}$", R.string.error_mailing_address_invalid);
         awesomeValidation.addValidation(this, R.id.email_address, android.util.Patterns.EMAIL_ADDRESS, R.string.error_invalid_email);
-        awesomeValidation.addValidation(this, R.id.phone_number, RegexTemplate.TELEPHONE, R.string.error_phone);
+        awesomeValidation.addValidation(this, R.id.phone_number, "^\\d{10}$", R.string.error_phone);
 
 
         RadioGroup paymentOptions = findViewById(R.id.payment_options);
         // Submit button click listener
         Button submitOrder = findViewById(R.id.submit_order);
         submitOrder.setOnClickListener(view -> {
+            // First, validate all form fields
+            boolean isFormValid = awesomeValidation.validate();
             // Check if any payment option is selected
             int selectedPaymentOption = paymentOptions.getCheckedRadioButtonId();
             if (selectedPaymentOption == -1) {
                 // No payment option is selected
                 Toast.makeText(this, "Please select a payment option.", Toast.LENGTH_SHORT).show();
-                return; // Exit the method to prevent submission
             }
 
-            // Validate the rest of the form
-            if (awesomeValidation.validate()) {
+            // Combine both validations: form fields and payment selection
+            if (isFormValid && selectedPaymentOption != -1) {
                 Toast.makeText(this, "Validation Successful!", Toast.LENGTH_SHORT).show();
 
                 // Clear the cart from the database
@@ -97,7 +74,13 @@ public class Checkout extends AppCompatActivity {
                 Intent newIntent = new Intent(Checkout.this, Thankyou.class);
                 startActivity(newIntent);
             } else {
-                Toast.makeText(this, "Validation Failed. Please check your inputs.", Toast.LENGTH_SHORT).show();
+                // If form is invalid or payment option not selected, show general error
+                if (!isFormValid) {
+                    Toast.makeText(this, "Validation Failed. Please check your inputs.", Toast.LENGTH_SHORT).show();
+                }
+                if (selectedPaymentOption == -1) {
+                    Toast.makeText(this, "Please select a payment option.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -115,9 +98,9 @@ public class Checkout extends AppCompatActivity {
                 paymentPortalFields.setVisibility(View.GONE);
 
                 // Add validation rules for credit card fields
-                awesomeValidation.addValidation(this, R.id.credit_card_fullname, RegexTemplate.NOT_EMPTY, R.string.error_credit_card_fullname);
+                awesomeValidation.addValidation(this, R.id.credit_card_fullname, "^(?!\\s*$)[A-Za-z]+([ '-][A-Za-z]+)*$", R.string.error_credit_card_fullname);
                 awesomeValidation.addValidation(this, R.id.credit_card_number, "^[0-9]{16}$", R.string.error_credit_card_number);
-                awesomeValidation.addValidation(this, R.id.credit_card_expiry, "^(0[1-9]|1[0-2])/([0-9]{2})$", R.string.error_credit_card_expiry);
+                awesomeValidation.addValidation(this, R.id.credit_card_expiry, "^(0[1-9]|1[0-2])\\/([0-9]{2})$", R.string.error_credit_card_expiry);
                 awesomeValidation.addValidation(this, R.id.credit_card_cvv, "^[0-9]{3,4}$", R.string.error_credit_card_cvv);
             } else if (checkedId == R.id.debit_card_option){
                 debitCardFields.setVisibility(View.VISIBLE);
@@ -125,9 +108,9 @@ public class Checkout extends AppCompatActivity {
                 paymentPortalFields.setVisibility(View.GONE);
 
                 // Add validation rules for debit card fields
-                awesomeValidation.addValidation(this, R.id.debit_card_fullname, RegexTemplate.NOT_EMPTY, R.string.error_debit_card_fullname);
+                awesomeValidation.addValidation(this, R.id.debit_card_fullname, "^(?!\\s*$)[A-Za-z]+([ '-][A-Za-z]+)*$", R.string.error_debit_card_fullname);
                 awesomeValidation.addValidation(this, R.id.debit_card_number, "^[0-9]{16}$", R.string.error_debit_card_number);
-                awesomeValidation.addValidation(this, R.id.debit_card_expiry, "^(0[1-9]|1[0-2])/([0-9]{2})$", R.string.error_debit_card_expiry);
+                awesomeValidation.addValidation(this, R.id.debit_card_expiry, "^(0[1-9]|1[0-2])\\/([0-9]{2})$", R.string.error_debit_card_expiry);
                 awesomeValidation.addValidation(this, R.id.debit_card_cvv, "^[0-9]{3,4}$", R.string.error_debit_card_cvv);
             }
             else if (checkedId == R.id.payment_portal_option){

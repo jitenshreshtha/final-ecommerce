@@ -106,8 +106,10 @@ public class Product_details extends AppCompatActivity {
 
                     // Increase quantity
                     increaseQuantity.setOnClickListener(v -> {
-                        quantity++;
-                        quantityTextView.setText(String.valueOf(quantity));
+                       if(quantity < 10){
+                           quantity++;
+                           quantityTextView.setText(String.valueOf(quantity));
+                       }
                     });
 
                     addToCart.setOnClickListener(v -> {

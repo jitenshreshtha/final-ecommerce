@@ -34,6 +34,13 @@ public class CartManager {
                     if (existingItem != null) {
                         int updatedQuantity = existingItem.getQuantity() + quantity;
 
+                        if (updatedQuantity > 10) {
+                            Toast.makeText(context, "Cart limit reached", Toast.LENGTH_SHORT).show();
+                            updatedQuantity = 10;
+                        } else if (updatedQuantity < 1) {
+                            updatedQuantity = 1;
+                        }
+
                         // Update the quantity in the database
                         Map<String, Object> updates = new HashMap<>();
                         updates.put("quantity", updatedQuantity);
